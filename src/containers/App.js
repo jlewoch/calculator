@@ -18,11 +18,16 @@ class App extends Component {
       valueinput: '0',
       userInput: [],
       ranFunc: false,
+      ranSum: false,
     }
   }
 
   keyFilter = (e) => {
-    this.funcfilter(e.key);
+    if (!this.state.ranSum || e.key === '+' || e.key === '-' || e.key === 'multiply' || e.key === '*' || e.key === '/' || e.key === 'Backspace') {
+      this.funcfilter(e.key);
+    } else {
+      alert('Please enter a function');
+    }
   }
 
   //removes lat char from string
@@ -42,8 +47,7 @@ class App extends Component {
   }
 
   //assigns variables and runs appropriate action based on values inputted by user
-  performFunc = () => {
-    console.log("perform")
+  performFunc = (user) => {
     if (history.length > 2) {
 
       for (let i = 0; i <= history.length - 1; i++) {
@@ -60,11 +64,13 @@ class App extends Component {
         if (num1 !== null & selectedFunc !== null) {
           this.func();
         }
-        console.log("perform for")
       }
 
       history = [];
       history.push(this.state.userInput[this.state.userInput.length])
+
+
+
     }
     this.setState({ ranFunc: true });
     displayValue = total.toString();
@@ -79,17 +85,20 @@ class App extends Component {
     if (selectedFunc === '+') {
       total += num1;
       num1 = null;
+      selectedFunc = null;
     } else if (selectedFunc === '-') {
       total -= num1;
       num1 = null;
+      selectedFunc = null;
     } else if (selectedFunc === '/') {
       total /= num1;
       num1 = null;
+      selectedFunc = null;
     } else if (selectedFunc === 'multiply' || selectedFunc === '*') {
       total *= num1;
       num1 = null;
+      selectedFunc = null;
     }
-    console.log(total)
   }
 
 
@@ -120,16 +129,29 @@ class App extends Component {
         break;
 
       case (userInput === '+' || userInput === '-' || userInput === 'multiply' || userInput === '*' || userInput === '/'):
-        this.pushInput(displayValue, userInput)
-        this.performFunc(userInput)
+        if (this.state.ranSum) {
+          this.pushInput(userInput);
+          this.performFunc(userInput);
+          this.setState({ ranSum: false });
+        } else if (!this.state.ranSum & !this.state.ranFunc) {
+          this.pushInput(displayValue, userInput);
+          this.performFunc(userInput);
+        }
+
+
         break;
 
       case (userInput === '=' || userInput === 'Enter'):
+        if (!this.state.ranFunc) {
+          this.pushInput(displayValue);
+          this.performFunc(userInput);
+          this.setState({ ranSum: true });
+        }
         break;
 
       case (userInput === 'clear'):
         history = [];
-        displayValue = 0;
+        displayValue = '0';
         total = 0;
         this.setState({ userInput: [] });
         this.updateDisplay();
@@ -142,7 +164,11 @@ class App extends Component {
   }
 
   clickHandler = (event) => {
-    this.funcfilter(event.target.value)
+    if (!this.state.ranSum || event.target.value === '+' || event.target.value === '-' || event.target.value === 'multiply' || event.target.value === '*' || event.target.value === '/' || event.target === 'clear') {
+      this.funcfilter(event.target.value);
+    } else {
+      alert('Please enter a function');
+    }
   }
 
   componentDidMount() {
@@ -159,11 +185,11 @@ class App extends Component {
 
     return (
       <div className='main'>
-      <h1 style={{width: '100%', margin: '5px', 'text-align': 'center'}} >Basic Calculator</h1>
+        <h1 style={{ width: '100%', margin: '5px', 'text-align': 'center' }} >Basic Calculator</h1>
         <div className='calc'>
           <Calculator value={this.state.valueinput} click={this.clickHandler} />
         </div>
-        </div>
+      </div>
     );
   }
 }
