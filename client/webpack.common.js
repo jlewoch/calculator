@@ -4,7 +4,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 module.exports = {
   entry: './src/index.js',
-  mode: 'development',
   module: {
     rules: [
       {
@@ -44,13 +43,6 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/',
     filename: 'bundle.js'
-  },
-  devServer: {
-    port: 3000,
-    hot: true,
-    inline: true,
-    compress: true,
-    historyApiFallback: true
   },
   plugins: [
     new CleanWebpackPlugin(),
